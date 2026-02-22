@@ -4,6 +4,27 @@ info:
   version: 1.0.0
 
 paths:
+  /students/{id}:
+    get:
+      tags: [ students ]
+      operationId: getStudentByIdFromData
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Student found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentDataResponse'
+        '404':
+          description: Not found
+
   /students:
     post:
       tags: [students]

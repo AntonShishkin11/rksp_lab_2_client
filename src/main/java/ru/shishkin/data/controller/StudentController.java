@@ -31,16 +31,33 @@ public class StudentController implements StudentsApi {
         return ResponseEntity.status(200).body(response);
     }
     @Override
-    public ResponseEntity<List<StudentDataResponse>> getStudentsFromData() {
+    public ResponseEntity<StudentDataResponse> getStudentByIdFromData(Long id) {
+        return studentRepository.findById(id)
+                .map(student -> {
+                    StudentDataResponse r = new StudentDataResponse();
+                    r.setId(student.getId());
+                    r.setFullName(student.getName());
+                    r.setPassport(student.getPassport());
+                    return ResponseEntity.ok(r);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 
-        List<StudentDataResponse> responses = studentRepository.findAll().stream().map(student -> {
-            StudentDataResponse r = new StudentDataResponse();
-            r.setId(student.getId());
-            r.setFullName(student.getName());
-            r.setPassport(student.getPassport());
-            return r;
-        }).toList();
+    @Override
+    public ResponseEntity<java.util.List<ru.shishkin.data.model.StudentDataResponse>> getStudentsFromData() {
 
-        return ResponseEntity.ok(responses);
+        java.util.List<ru.shishkin.data.model.StudentDataResponse> list =
+                studentRepository.findAll().stream()
+                        .map(s -> {
+                            ru.shishkin.data.model.StudentDataResponse r =
+                                    new ru.shishkin.data.model.StudentDataResponse();
+                            r.setId(s.getId());
+                            r.setFullName(s.getName());   // у тебя name = fio
+                            r.setPassport(s.getPassport());
+                            return r;
+                        })
+                        .toList();
+
+        return ResponseEntity.ok(list);
     }
 }
